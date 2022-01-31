@@ -8,6 +8,25 @@
     <link rel="stylesheet" href="public/Assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="public/Assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js" ></script>
+    <script src="public/Assets/js/jquery-3.4.1.min.js" ></script>
+    <script src="public/Assets/js/app.js" ></script>
+    <script>
+        $(function(){
+            const urlParam = new URLSearchParams(window.location.search);
+            let meetingId = urlParam.get("meetingID");
+            let userId = window.prompt('Enter your username')
+
+            if(!userId || !meetingId){
+                alert('User id or meeting id is missing')
+                window.location.href = "/action.html"
+                return
+            }
+            $("#meetingContainer").show();
+
+            myApp._init(userId, meetingId)
+        })
+    </script>
 </head>
 <body>
     <main class=" d-flex flex-column home-wrap">
