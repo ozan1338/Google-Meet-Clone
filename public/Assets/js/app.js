@@ -135,6 +135,7 @@ const appProcess = (function (){
     const videoProcess = async(newVideoState) => {
         if(newVideoState === videoStates.None){
             $("#videoCamOnOff").html("<span class='material-icons' style='width: 100%;'>videocam_off</span>")
+            $("#btnShareOnOff").html("<span class='material-icons'>present_to_all</span><div>Present Now</div>")
             videoSt = newVideoState
             console.log("arraseo");
 
@@ -162,6 +163,10 @@ const appProcess = (function (){
                     },
                     audio:false
                 })
+                videoStream.oninactive = (event) => {
+                    removeVideoStream(rtpVideoSenders);
+                    $("#btnShareOnOff").html('<span class="material-icons  ">present_to_all</span><div class="">Present Now</div>')
+                }
             }
 
             if(videoStream && videoStream.getVideoTracks().length > 0){
@@ -178,7 +183,14 @@ const appProcess = (function (){
             return
         }
         videoSt = newVideoState;
-        //console.log(videoSt);
+
+        if(newVideoState === videoStates.Camera){
+            $("#videoCamOnOff").html("<span class='material-icons' style='width: 100%;'>videocam</span>")
+            $("#btnShareOnOff").html('<span class="material-icons  ">present_to_all</span><div class="">Present Now</div>')
+        }else if(newVideoState === videoStates.ScreenShare){
+            $("#videoCamOnOff").html("<span class='material-icons' style='width: 100%;'>videocam_off</span>")
+            $("#btnShareOnOff").html('<span class="material-icons text-success ">present_to_all</span><div class="text-success">Stop Present Now</div>')
+        }
     }
 
     let iceConfiguration = {
