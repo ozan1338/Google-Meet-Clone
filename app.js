@@ -31,5 +31,17 @@ io.on("connection",(socket)=>{
                 connId: socket.id
             })
         })
+
+        socket.emit("informMeToOtherUser", otherUser)
+
     })
+
+    socket.on("SDPProcess", (data)=>{
+        socket.to(data.toConnId).emit("SDPProcess", {
+            message: data.message,
+            fromConnId: socket.id
+        })
+        //console.log("success");
+    })
+
 })
