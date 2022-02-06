@@ -304,6 +304,31 @@ const appProcess = (function (){
         }
     }
 
+    const closeConnection = async(connId)=>{
+        peersConnectionId[connId] = null;
+        if(peers_connection[connId]){
+            peersConnection[connId].close();
+            peersConnection[connId] = null;
+
+        }
+        if(remoteAudioStream[connId]){
+            remoteAudioStream[connId].getTracks().forEach(item => {
+                if(item.stop){
+                    item.stop()
+                }
+            })
+            remoteAudioStream[connId] = null
+        }
+        if(remoteVideoStream[connId]){
+            remoteVideoStream[connId].getTracks().forEach(item => {
+                if(item.stop){
+                    item.stop()
+                }
+            })
+            remoteVideoStream[connId] = null
+        }
+    }
+
     return {
         setNewConnection: async(connId)=>{
             await setConnection(connId)
@@ -313,6 +338,9 @@ const appProcess = (function (){
         },
         processClientFunc: async(data,fromConnId)=>{
             await SDPProcess(data,fromConnId)
+        },
+        closeConnectionCall: async(connId)=>{
+            await closeConnection(connId)
         }
     }
 })();
@@ -351,6 +379,13 @@ const myApp = (function(){
                 }
             }
         });
+
+        socket.on("informOtherAboutDisconnectedUser", (data)=>{
+            $('#'+data.connId).remove();
+            console.log('#'+data.connId);
+            console.log("ciiaoo");
+            appProcess.closeConnectionCall(data.connId)
+        })
 
         socket.on("informNewUser", (data)=>{
             addUser(data.otherUserId, data.connId);

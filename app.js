@@ -44,4 +44,25 @@ io.on("connection",(socket)=>{
         //console.log("success");
     })
 
+    socket.on("disconnect", ()=>{
+        console.log("user disconnected: "+ socket.id);
+        console.log(userConnections);
+        let userDisconnected = userConnections.find(item => item.connectionId === socket.id)
+        
+        console.log(userDisconnected);
+
+        if(userDisconnected){
+            let meetingId = userDisconnected.meetingId;
+            userConnections = userConnections.filter(item => item.connectionId !== socket.id)
+            let list = userConnections.filter(item => item.meetingId == meetingId)
+            console.log(list);
+            list.forEach(item => {
+                socket.to(item.connectionId).emit("informOtherAboutDisconnectedUser", {
+                    connId: socket.id,
+                    
+                })
+            })
+        }
+    })
+
 })
